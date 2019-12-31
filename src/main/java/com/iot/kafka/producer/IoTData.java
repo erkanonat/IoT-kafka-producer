@@ -15,7 +15,6 @@ public class IoTData implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone="MST")
     private Date timestamp;
 
-
     public IoTData(String ptsId, String plateNumber, String color, double speed, String vehicleType, Date timestamp) {
 
         super();
@@ -26,6 +25,7 @@ public class IoTData implements Serializable {
         this.vehicleType = vehicleType;
         this.timestamp = timestamp;
     }
+
 
     public String getPtsId() {
         return ptsId;
