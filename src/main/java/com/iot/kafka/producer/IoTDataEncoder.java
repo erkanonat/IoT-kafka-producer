@@ -11,9 +11,7 @@ public class IoTDataEncoder implements Encoder<IoTData> {
 
     private static final Logger logger = Logger.getLogger(IoTDataEncoder.class);
     private static ObjectMapper objectMapper = new ObjectMapper();
-    public IoTDataEncoder(VerifiableProperties verifiableProperties) {
 
-    }
     public byte[] toBytes(IoTData iotEvent) {
         try {
             String msg = objectMapper.writeValueAsString(iotEvent);

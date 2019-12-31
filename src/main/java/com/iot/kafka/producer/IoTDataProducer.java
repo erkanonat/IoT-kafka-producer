@@ -1,25 +1,14 @@
 package com.iot.kafka.producer;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
-import java.util.UUID;
-
-import org.apache.log4j.Logger;
-
-
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
+import org.apache.log4j.Logger;
+
+import java.util.*;
 
 
 public class IoTDataProducer {
-
 
 
     private static final Logger logger = Logger.getLogger(IoTDataProducer.class);
@@ -45,56 +34,34 @@ public class IoTDataProducer {
     }
 
 
-    /**
-     * Method runs in while loop and generates random IoT data in JSON with below format.
-     *
-     * {"vehicleId":"52f08f03-cd14-411a-8aef-ba87c9a99997","vehicleType":"Public Transport","routeId":"route-43","latitude":",-85.583435","longitude":"38.892395","timestamp":1465471124373,"speed":80.0,"fuelLevel":28.0}
-     *
-     * @throws InterruptedException
-     *
-     *
-     */
     private void generateIoTEvent(Producer<String, IoTData> producer, String topic) throws InterruptedException {
 
-        List<String> routeList = Arrays.asList(new String[]{"PTS_1","PTS_2","PTS_3","PTS_4","PTS_5"});
-        List<String> colorList = Arrays.asList(new String[]{"white","black","red","blue","grey","yellow"});
-        List<String> vehicleTypeList = Arrays.asList(new String[]{"Large Truck", "Small Truck", "Private Car", "Bus", "Taxi"});
+        List<String> routeList = Arrays.asList(new String[]{"PTS_1", "PTS_2", "PTS_3", "PTS_4", "PTS_5"});
+        List<String> colorList = Arrays.asList(new String[]{"white", "black", "red", "blue", "grey", "yellow"});
+        List<String> vehicleTypeList = Arrays.asList(new String[]{"Large Truck", "Small Truck", "Private Car", "Bus",
+                "Taxi"});
 
         Random rand = new Random();
         logger.info("Sending events");
 
-        long i=0L;
+        long i = 0L;
 
-        // generate event in loop
         while (true) {
 
-            if( i%10 == 0 ){
-                String ptsId = routeList.get(rand.nextInt(5));
-                IoTData event = new IoTData(ptsId,"06_ABJ_373", "white",120,"SEDAN",new Date());
+            String ptsId = routeList.get(rand.nextInt(5));
+            String vehicleType = vehicleTypeList.get(rand.nextInt(5));
+            String plateNumber = generateRandomPlateNumber();
+            String color = colorList.get(rand.nextInt(6));
+            Date timestamp = new Date();
+            double speed = rand.nextInt(120 - 50) + 50;// random speed between 50 to 120
 
-                KeyedMessage<String, IoTData> data = new KeyedMessage<String, IoTData>(topic, event);
-                producer.send(data);
-                //Thread.sleep(rand.nextInt(3000 - 1000) + 1000);//random delay of 1 to 3 seconds
-                i++;
-                Thread.sleep(1000);
-            }else{
-                String ptsId = routeList.get(rand.nextInt(5));
-                String vehicleType = vehicleTypeList.get(rand.nextInt(5));
-                String plateNumber = generateRandomPlateNumber();
-                String color = colorList.get(rand.nextInt(6));
-                Date timestamp = new Date();
-                double speed = rand.nextInt(120 - 50) + 50;// random speed between 50 to 120
+            IoTData event = new IoTData(ptsId, plateNumber, color, speed, vehicleType, timestamp);
 
-                IoTData event = new IoTData(ptsId,plateNumber, color,speed,vehicleType,timestamp);
-
-                KeyedMessage<String, IoTData> data = new KeyedMessage<String, IoTData>(topic, event);
-                producer.send(data);
-                //Thread.sleep(rand.nextInt(3000 - 1000) + 1000);//random delay of 1 to 3 seconds
-                i++;
-                Thread.sleep(1000);
-            }
-
-
+            KeyedMessage<String, IoTData> data = new KeyedMessage<String, IoTData>(topic, event);
+            producer.send(data);
+            //Thread.sleep(rand.nextInt(3000 - 1000) + 1000);//random delay of 1 to 3 seconds
+            i++;
+            Thread.sleep(1000);
 
         }
     }

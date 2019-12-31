@@ -16,10 +16,6 @@ public class IoTData implements Serializable {
     private Date timestamp;
 
 
-    public IoTData(){
-
-    }
-
     public IoTData(String ptsId, String plateNumber, String color, double speed, String vehicleType, Date timestamp) {
 
         super();
